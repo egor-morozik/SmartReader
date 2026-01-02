@@ -17,6 +17,7 @@ services:
       SUPABASE_KEY: ${SUPABASE_KEY}
       DB_SYSTEM: ${DB_SYSTEM:-supabase}
       DB_TABLE_DOCUMENTS: ${DB_TABLE_DOCUMENTS:-documents}
+      DB_TABLE_SUMMARIES: ${DB_TABLE_SUMMARIES:-summaries}
       
       RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
       RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
@@ -41,6 +42,7 @@ services:
       SUPABASE_URL: ${SUPABASE_URL}
       SUPABASE_KEY: ${SUPABASE_KEY}
       DB_SYSTEM: ${DB_SYSTEM:-supabase}
+      DB_TABLE_DOCUMENTS: ${DB_TABLE_DOCUMENTS:-documents}
       DB_TABLE_SUMMARIES: ${DB_TABLE_SUMMARIES:-summaries}
       
       GROQ_KEY: ${GROQ_KEY}

@@ -15,11 +15,19 @@ class SupabaseDBClient(DataBaseInterface):
         self._documents_table = os.getenv("DB_TABLE_DOCUMENTS")
         self._summaries_table = os.getenv("DB_TABLE_SUMMARIES")
 
-    def get_data(self):
-        response = self._client.table(self._sheet_name).select("*").execute()
+    def insert_documents_data(self, data):
+        response = self._client.table(self._documents_table).insert({"text": data}).execute()
         return response.data
-    
-    def insert_data(self, data):
-        response = self._client.table(self._sheet_name).insert({"text": data}).execute()
+
+    def get_documents_data(self):
+        response = self._client.table(self._documents_table).select("*").execute()
+        return response.datas
+
+    def insert_summary_data(self, data):
+        response = self._client.table(self._summaries_tabl).insert({"text": data}).execute()
         return response.data
+
+    def get_summary_data(self):
+        response = self._client.table(self._summaries_table).select("*").execute()
+        return response.datas
     
