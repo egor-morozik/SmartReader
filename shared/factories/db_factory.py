@@ -1,7 +1,7 @@
-from re import match
+
 from typing import Optional
+from ..interfaces.db_interface import DataBaseInterface
 from dotenv import load_dotenv
-from .db_interface import DataBaseInterface
 
 import os
 
@@ -12,10 +12,10 @@ class DataBaseFactory:
 
     @classmethod
     def _create_client(cls) -> DataBaseInterface:
-        db_system = os.getenv("DB_SYSTEM", "").lower()
+        db_system = os.getenv("DB_SYSTEM", "supabase").lower()
         match db_system:
             case "supabase":
-                from .db_clients.db_supabase import SupabaseDBClient
+                from ..implementations.db_supabase import SupabaseDBClient
                 return SupabaseDBClient()
             case _:
                 raise ValueError(f"Unsupported database type: {db_system}")

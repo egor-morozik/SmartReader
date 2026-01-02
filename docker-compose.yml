@@ -1,0 +1,65 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+
+  content-service:
+    build: ./content-service
+    ports:
+      - "${CONTENT_SERVICE_PORT:-8000}:8000"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_KEY: ${SUPABASE_KEY}
+      DB_SYSTEM: ${DB_SYSTEM:-supabase}
+      DB_TABLE_DOCUMENTS: ${DB_TABLE_DOCUMENTS:-documents}
+      
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      
+      SERVICE_NAME: content-service
+      SERVICE_TYPE: content
+      
+      PYTHONPATH: /app:/app/shared
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./content-service:/app
+      - ./shared:/app/shared
+      - ./.env:/app/.env:ro  
+    depends_on:
+      - rabbitmq
+
+  ai-service:
+    build: ./ai-service
+    ports:
+      - "${AI_SERVICE_PORT:-8001}:8000"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_KEY: ${SUPABASE_KEY}
+      DB_SYSTEM: ${DB_SYSTEM:-supabase}
+      DB_TABLE_SUMMARIES: ${DB_TABLE_SUMMARIES:-summaries}
+      
+      GROQ_KEY: ${GROQ_KEY}
+      AI_SYSTEM: ${AI_SYSTEM:-groq}
+      AI_MODEL: ${AI_MODEL:-llama-3.3-70b-versatile}
+      AI_TEMPERATURE: ${AI_TEMPERATURE:-0.3}
+      AI_MAX_TOKENS: ${AI_MAX_TOKENS:-256}
+      
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      
+      SERVICE_NAME: ai-service
+      SERVICE_TYPE: ai
+      
+      PYTHONPATH: /app:/app/shared
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./ai-service:/app
+      - ./shared:/app/shared
+      - ./.env:/app/.env:ro 
+    depends_on:
+      - rabbitmq

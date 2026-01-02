@@ -1,4 +1,4 @@
-from ..db_interface import DataBaseInterface
+from ..interfaces.db_interface import DataBaseInterface
 from dotenv import load_dotenv
 from supabase import create_client
 
@@ -12,7 +12,8 @@ class SupabaseDBClient(DataBaseInterface):
             os.getenv("SUPABASE_URL"), 
             os.getenv("SUPABASE_KEY")
             )
-        self._sheet_name = os.getenv("DB_SHEET_NAME")
+        self._documents_table = os.getenv("DB_TABLE_DOCUMENTS")
+        self._summaries_table = os.getenv("DB_TABLE_SUMMARIES")
 
     def get_data(self):
         response = self._client.table(self._sheet_name).select("*").execute()
