@@ -21,13 +21,13 @@ class SupabaseDBClient(DataBaseInterface):
 
     def get_documents_data(self):
         response = self._client.table(self._documents_table).select("*").execute()
-        return response.datas
+        return response.data
 
     def insert_summary_data(self, data):
-        response = self._client.table(self._summaries_tabl).insert({"text": data}).execute()
+        response = self._client.table(self._summaries_table).insert({"summary_text": data["text"], "document_id": data["document_id"]}).execute()
         return response.data
 
     def get_summary_data(self):
         response = self._client.table(self._summaries_table).select("*").execute()
-        return response.datas
+        return response.data
     

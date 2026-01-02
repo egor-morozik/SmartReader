@@ -11,8 +11,8 @@ class GroqClient(AiInterface):
         self.client = Groq(api_key=os.getenv("GROQ_KEY",""))
         self.defaults = {
             "model": os.getenv("AI_MODEL","llama-3.3-70b-versatile"),
-            "temperature": os.getenv("AI_TEMPERATURE", 0.3),
-            "max_tokens": os.getenv("AI_MAX_TOKENS", 256),
+            "temperature": float(os.getenv("AI_TEMPERATURE", 0.3)),
+            "max_tokens": int(os.getenv("AI_MAX_TOKENS", 256)),
         }
 
     def send(self, query: str = "") -> str:

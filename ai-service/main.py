@@ -2,6 +2,7 @@ import threading
 import pika
 import json
 import os
+import time
 
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
@@ -34,11 +35,30 @@ def process_message(body):
         "text": summary_text
     }
     
-    db.insert_data(data)
+    db.insert_summary_data(data)
     
     return True
-        
+
+def wait_for_rabbitmq():
+    for _ in range(30):  
+        try:
+            test_connection = pika.BlockingConnection(
+                pika.ConnectionParameters(
+                    host=os.getenv("RABBITMQ_HOST", "rabbitmq"),
+                    port=5672
+                )
+            )
+            test_connection.close()
+            return True
+        except:
+            time.sleep(2)  
+    return False
+
 def start_consumer():
+
+    if not wait_for_rabbitmq():
+        return
+    
     while True:
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(

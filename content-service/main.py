@@ -3,7 +3,6 @@ import json
 import os
 
 from fastapi import FastAPI
-from datetime import datetime
 from dotenv import load_dotenv
 
 from shared.factories.db_factory import DataBaseFactory
@@ -23,14 +22,9 @@ def get_rabbitmq_channel():
 
 app = FastAPI()
 
-@app.post("/documents")
-async def create_document(document: str):
-    data = {
-        "text": document.text,
-        "created_at": datetime.datetime().isoformat()
-    }
-    
-    response = db.insert_data(data)
+@app.post("/create_document")
+async def create_document(text: str):
+    response = db.insert_documents_data(text)
     
     document_id = response[0]["id"] if isinstance(response, list) and response else None
     
@@ -39,7 +33,7 @@ async def create_document(document: str):
     
     message = {
         "document_id": document_id,
-        "text": document.text
+        "text": text
     }
     
     channel.basic_publish(
@@ -60,4 +54,4 @@ async def create_document(document: str):
         
 @app.get("/documents")
 async def get_all_documents():
-    return db.get_data()
+    return db.get_documents_data()
