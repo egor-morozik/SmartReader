@@ -14,7 +14,9 @@ ai = AiFactory.get_client(os.getenv("AI_SYSTEM", ""))
 
 @app.post("/create_document")
 async def create_document(text: str):
-    text = ai.send(text)
+    text = ai.send(f"""Reduce this text to a minimum, 
+                   conveying its general meaning. In response, 
+                   return only the new text: {text}""")
     db.insert_data(text)
     return {"message": "Document created successfully",
             "new version" : text}
