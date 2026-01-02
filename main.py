@@ -1,11 +1,16 @@
 from fastapi import FastAPI
 from db.db_factory import DataBaseFactory
 from ai.ai_factory import AiFactory
+from dotenv import load_dotenv
+
+import os 
+
+load_dotenv()
 
 app = FastAPI()
 
 db = DataBaseFactory.get_client()
-ai = AiFactory.get_client("groq")
+ai = AiFactory.get_client(os.getenv("AI_SYSTEM", ""))
 
 @app.post("/create_document")
 async def create_document(text: str):
