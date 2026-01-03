@@ -15,7 +15,7 @@ class GroqClient(AiInterface):
             "max_tokens": int(os.getenv("AI_MAX_TOKENS", 256)),
         }
 
-    def send(self, query: str = "") -> str:
+    def send(self, query: str) -> str:
         response = self.client.chat.completions.create(
             messages=[{"role": "user", "content": query}],
             **self.defaults

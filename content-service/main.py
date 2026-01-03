@@ -11,7 +11,7 @@ load_dotenv()
 
 db = DataBaseFactory.get_client()
 
-def get_rabbitmq_channel():
+def get_rabbitmq_channel() -> pika.BlockingConnection:
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(
             host=os.getenv("RABBITMQ_HOST", "rabbitmq"),

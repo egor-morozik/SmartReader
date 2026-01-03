@@ -23,7 +23,7 @@ def summarize_text(text: str) -> str:
     
     return ai.send(prompt)
 
-def process_message(body):
+def process_message(body: str) -> str:
     message = json.loads(body)
     document_id = message["document_id"]
     text = message["text"]
@@ -39,7 +39,7 @@ def process_message(body):
     
     return True
 
-def wait_for_rabbitmq():
+def wait_for_rabbitmq() -> bool:
     for _ in range(30):  
         try:
             test_connection = pika.BlockingConnection(
@@ -54,7 +54,7 @@ def wait_for_rabbitmq():
             time.sleep(2)  
     return False
 
-def start_consumer():
+def start_consumer() -> None:
 
     if not wait_for_rabbitmq():
         return
