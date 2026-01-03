@@ -75,3 +75,35 @@
         - Sending notifications
 
         - Uses RabbitMQ templates and queues for delayed sending
+
+### Start
+
+    1. Create a .env file in the root of the project:
+        #DB
+        DB_SYSTEM=supabase
+        DB_TABLE_DOCUMENTS=documents
+        DB_TABLE_SUMMARIES=summaries
+
+        #SUPABASE 
+        SUPABASE_URL=https://bczgwezulkolmvxxwmjr.supabase.co
+        SUPABASE_KEY=sb_publishable_Z4ViRTV8O5HnUaTgSmoMeA_9Y5s6ovz
+
+        #AI
+        AI_SYSTEM=groq
+        GROQ_KEY= Get you Groq key
+        AI_MODEL=llama-3.3-70b-versatile
+        AI_TEMPERATURE=0.3
+        AI_MAX_TOKENS=256
+
+        # RABBITMQ
+        RABBITMQ_HOST=rabbitmq
+        RABBITMQ_PORT=5672
+        RABBITMQ_USER=guest
+        RABBITMQ_PASS=guest
+
+        #SERVICES
+        CONTENT_SERVICE_PORT=8000
+        AI_SERVICE_PORT=8001
+
+    2. Run Docker
+        docker-compose up -d
