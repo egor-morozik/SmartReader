@@ -1,22 +1,25 @@
-from ..interfaces.db_interface import DataBaseInterface
+import os
+
 from dotenv import load_dotenv
 from supabase import create_client
 
-import os
+from ..interfaces.db_interface import DataBaseInterface
 
 load_dotenv()
+
 
 class SupabaseDBClient(DataBaseInterface):
     def __init__(self):
         self._client = create_client(
-            os.getenv("SUPABASE_URL"), 
-            os.getenv("SUPABASE_KEY")
-            )
+            os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY")
+        )
         self._documents_table = os.getenv("DB_TABLE_DOCUMENTS")
         self._summaries_table = os.getenv("DB_TABLE_SUMMARIES")
 
     def insert_documents_data(self, data: str) -> str:
-        response = self._client.table(self._documents_table).insert({"text": data}).execute()
+        response = (
+            self._client.table(self._documents_table).insert({"text": data}).execute()
+        )
         return response.data
 
     def get_documents_data(self, data: str) -> str:
@@ -24,10 +27,13 @@ class SupabaseDBClient(DataBaseInterface):
         return response.data
 
     def insert_summary_data(self, data: str) -> str:
-        response = self._client.table(self._summaries_table).insert({"summary_text": data["text"], "document_id": data["document_id"]}).execute()
+        response = (
+            self._client.table(self._summaries_table)
+            .insert({"summary_text": data["text"], "document_id": data["document_id"]})
+            .execute()
+        )
         return response.data
 
     def get_summary_data(self: str) -> str:
         response = self._client.table(self._summaries_table).select("*").execute()
         return response.data
-    
