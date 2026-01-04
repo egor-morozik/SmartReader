@@ -34,7 +34,7 @@ jobs:
     - name: Build and push Content Service
       uses: docker/build-push-action@v4
       with:
-        context: .
+        context: ./content-service
         file: ./content-service/Dockerfile
         push: true
         tags: |
@@ -44,7 +44,7 @@ jobs:
     - name: Build and push AI Service
       uses: docker/build-push-action@v4
       with:
-        context: .
+        context: ./ai-service
         file: ./ai-service/Dockerfile
         push: true
         tags: |
@@ -61,4 +61,3 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         generate_release_notes: true
-        
