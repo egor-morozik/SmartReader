@@ -39,47 +39,36 @@ def process_message(body: str) -> str:
     return True
 
 
-def wait_for_rabbitmq() -> bool:
-    for _ in range(30):
+def start_consumer() -> None:
+    while True:
         try:
-            test_connection = pika.BlockingConnection(
+            connection = pika.BlockingConnection(
                 pika.ConnectionParameters(
                     host=os.getenv("RABBITMQ_HOST", "rabbitmq"), port=5672
                 )
             )
-            test_connection.close()
-            return True
-        except BaseException:
-            time.sleep(2)
-    return False
+            channel = connection.channel()
 
+            channel.queue_declare(queue="document_to_summarize", durable=True)
+            channel.basic_qos(prefetch_count=1)
 
-def start_consumer() -> None:
-    if not wait_for_rabbitmq():
-        return
+            def callback(ch, method, properties, body):
+                if process_message(body):
+                    ch.basic_ack(delivery_tag=method.delivery_tag)
+                else:
+                    ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
 
-    while True:
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(
-                host=os.getenv("RABBITMQ_HOST", "rabbitmq"), port=5672
+            channel.basic_consume(
+                queue="document_to_summarize", on_message_callback=callback
             )
-        )
-        channel = connection.channel()
 
-        channel.queue_declare(queue="document_to_summarize", durable=True)
-        channel.basic_qos(prefetch_count=1)
-
-        def callback(ch, method, properties, body):
-            if process_message(body):
-                ch.basic_ack(delivery_tag=method.delivery_tag)
-            else:
-                ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-
-        channel.basic_consume(
-            queue="document_to_summarize", on_message_callback=callback
-        )
-
-        channel.start_consuming()
+            channel.start_consuming()
+        except pika.exceptions.ConnectionClosedByBroker:
+            time.sleep(5)
+        except pika.exceptions.AMQPConnectionError:
+            time.sleep(5)
+        except KeyboardInterrupt:
+            break
 
 
 @asynccontextmanager

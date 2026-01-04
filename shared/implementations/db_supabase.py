@@ -22,7 +22,7 @@ class SupabaseDBClient(DataBaseInterface):
         )
         return response.data
 
-    def get_documents_data(self, data: str) -> str:
+    def get_documents_data(self) -> str:
         response = self._client.table(self._documents_table).select("*").execute()
         return response.data
 
